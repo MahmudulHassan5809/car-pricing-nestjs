@@ -29,8 +29,11 @@ export class UsersService {
         return this.repo.save(user);
     }
 
-    // remove(id: number) {
-    //     const user = this.repo.remove(id);
-    //     return this.repo.delete(user);
-    // }
+    async remove(id: number) {
+        const user = await this.fundOne(id);
+        if (!user) {
+            throw new Error('user not found');
+        }
+        return this.repo.remove(user);
+    }
 }
