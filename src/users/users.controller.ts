@@ -22,7 +22,7 @@ import { UserDto } from './dtos/user.dto';
 import { User } from './user.entity';
 import { UsersService } from './users.service';
 
-@Controller('users')
+@Controller('auth')
 @Serialize(UserDto)
 export class UsersController {
     constructor(
