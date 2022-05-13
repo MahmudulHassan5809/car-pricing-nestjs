@@ -5,12 +5,29 @@ import { UsersService } from './users.service';
 
 describe('AuthService', () => {
     let service: AuthService;
+    let fakeUsersService: Partial<UsersService>;
 
     beforeEach(async () => {
-        const fakeUsersService: Partial<UsersService> = {
-            find: () => Promise.resolve([]),
-            create: (email: string, password: string) =>
-                Promise.resolve({ id: 1, email, password } as User),
+        const users: User[] = [];
+        fakeUsersService = {
+            find: (email: string) => {
+                const filteredUsers = users.filter(
+                    (user) => user.email === email,
+                );
+
+                return Promise.resolve(filteredUsers);
+            },
+            create: (email: string, password: string) => {
+                const user = {
+                    id: Math.floor(Math.random() * 99999999),
+                    email,
+                    password,
+                } as User;
+
+                users.push(user);
+
+                return Promise.resolve(user);
+            },
         };
 
         const module = await Test.createTestingModule({
@@ -36,5 +53,31 @@ describe('AuthService', () => {
         const [salt, hash] = user.password.split('.');
         expect(salt).toBeDefined();
         expect(hash).toBeDefined();
+    });
+
+    it('throws an error if user sign up with email that is in use', async () => {
+        await service.signup('test@gmail.com', '12345');
+        try {
+            await service.signup('test@gmail.com', '12345');
+        } catch (error) {}
+    });
+
+    it('throws if signin is called with an unused email', async () => {
+        try {
+            await service.signin('test@gmail.com', '12345');
+        } catch (error) {}
+    });
+
+    it('throws if an invalid password provided', async () => {
+        await service.signup('test@gmail.com', '12345');
+        try {
+            await service.signin('test@gmail.com', '123455');
+        } catch (error) {}
+    });
+
+    it('return a user if password is correct', async () => {
+        await service.signup('test@gmail.com', '12345');
+        const user = await service.signin('test@gmail.com', '12345');
+        expect(user).toBeDefined();
     });
 });
