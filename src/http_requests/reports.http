@@ -2,13 +2,13 @@ POST http://localhost:3000/reports
 content-type: application/json
 
 {
-	"make": "toyota",
-	"model": "corolla",
+	"make": "ford",
+	"model": "mustag",
 	"year": 1980,
-	"mileage": 100000,
-	"lng": 0,
-	"lat": 0,
-	"price": 500000
+	"mileage": 50000,
+	"lng": 45,
+	"lat": 45,
+	"price": 10000
 }
 
 ### Approve an existing report
